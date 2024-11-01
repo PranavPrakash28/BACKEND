@@ -6,7 +6,26 @@ dotenv.config({
   path: "./env",
 });
 
-connectDB();
+connectDB()
+  .then(() => {
+    async () => {
+      try {
+        await mongoose.connect(`${process.env.MONGODB_URI} /${DB_NAME}`);
+        app.on("error", () => {
+          console.log("ERROR:", error);
+          throw error;
+        });
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`Server is running at port : ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MONGO db connection failed !!!", err);
+  });
 
 //  FIRST APPROACH WHERE WE WRITE THE DATABASE CONNECTION CODE IN THE INDEX FILE ITSELF
 /*
